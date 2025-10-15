@@ -43,12 +43,6 @@
       .content-auto {
         content-visibility: auto;
       }
-      .sidebar-item {
-        @apply flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-primary/10 hover:text-primary rounded-lg transition-all duration-200;
-      }
-      .sidebar-item.active {
-        @apply bg-primary/10 text-primary font-medium;
-      }
       .card {
         @apply bg-white rounded-xl shadow-sm border border-gray-200 p-5 transition-all duration-300 hover:shadow-md;
       }
@@ -95,134 +89,17 @@
     }
   </style>
 </head>
-<body class="font-inter bg-gray-100 text-gray-700 min-h-screen flex">
-  <!-- 左侧菜单 -->
-  <aside id="sidebar" class="w-64 bg-white border-r border-gray-200 h-screen flex-shrink-0 flex flex-col transition-all duration-300 ease-in-out z-20 overflow-y-auto">
-    <!-- 系统Logo -->
-    <div class="p-5 border-b border-gray-200 flex items-center gap-3">
-      <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-        <i class="fa fa-cubes text-xl"></i>
-      </div>
-      <h1 class="text-xl font-bold text-gray-700">供应链ERP</h1>
-    </div>
-    
-    <!-- 菜单列表 -->
-    <nav class="flex-1 overflow-y-auto py-4 px-3">
-      <div class="mb-2 px-3 text-xs font-medium text-gray-400 uppercase tracking-wider">
-        主菜单
-      </div>
-      <ul class="space-y-1">
-        <li>
-          <a href="#" class="sidebar-item active">
-            <i class="fa fa-dashboard w-5 text-center"></i>
-            <span>仪表盘</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="sidebar-item">
-            <i class="fa fa-shopping-cart w-5 text-center"></i>
-            <span>采购管理</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="sidebar-item">
-            <i class="fa fa-archive w-5 text-center"></i>
-            <span>库存管理</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="sidebar-item">
-            <i class="fa fa-truck w-5 text-center"></i>
-            <span>发货管理</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="sidebar-item">
-            <i class="fa fa-bar-chart w-5 text-center"></i>
-            <span>报表分析</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="sidebar-item">
-            <i class="fa fa-handshake-o w-5 text-center"></i>
-            <span>供应商管理</span>
-          </a>
-        </li>
-      </ul>
-      
-      <div class="mb-2 mt-6 px-3 text-xs font-medium text-gray-400 uppercase tracking-wider">
-        系统设置
-      </div>
-      <ul class="space-y-1">
-        <li>
-          <a href="#" class="sidebar-item">
-            <i class="fa fa-users w-5 text-center"></i>
-            <span>用户管理</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="sidebar-item">
-            <i class="fa fa-cog w-5 text-center"></i>
-            <span>系统设置</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-    
-    <!-- 折叠按钮 -->
-    <div class="p-4 border-t border-gray-200">
-      <button id="toggle-sidebar" class="w-full flex items-center justify-center gap-2 text-gray-500 hover:text-primary transition-colors">
-        <i class="fa fa-angle-double-left"></i>
-        <span>收起菜单</span>
-      </button>
-    </div>
-  </aside>
-
+<body class="font-inter bg-gray-100 text-gray-700 min-h-screen">
   <!-- 主内容区 -->
   <div class="flex-1 flex flex-col overflow-hidden">
-    <!-- 顶部导航栏 -->
-    <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 z-10">
-      <div class="flex items-center gap-4">
-        <button id="mobile-menu-btn" class="lg:hidden text-gray-500 hover:text-primary">
-          <i class="fa fa-bars text-xl"></i>
-        </button>
-        <div class="relative">
-          <input type="text" placeholder="搜索..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary w-64 transition-all">
-          <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-        </div>
-      </div>
-      
-      <div class="flex items-center gap-6">
-        <button class="relative text-gray-500 hover:text-primary transition-colors">
-          <i class="fa fa-bell text-xl"></i>
-          <span class="absolute -top-1 -right-1 w-4 h-4 bg-danger rounded-full text-white text-xs flex items-center justify-center">3</span>
-        </button>
-        
-        <div class="flex items-center gap-3 cursor-pointer group">
-          <img src="https://picsum.photos/id/1005/40/40" alt="用户头像" class="w-9 h-9 rounded-full object-cover border-2 border-transparent group-hover:border-primary transition-all">
-          <div class="hidden md:block">
-            <p class="text-sm font-medium">张经理</p>
-            <p class="text-xs text-gray-400">采购部主管</p>
-          </div>
-          <i class="fa fa-angle-down text-gray-400 group-hover:text-primary transition-colors"></i>
-        </div>
-      </div>
-    </header>
-
     <!-- 页面内容 - 确保可滚动 -->
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-100" style="height: calc(100vh - 4rem);">
-      <!-- 页面标题 -->
-      <div class="mb-6">
-        <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-gray-700">供应链管理看板</h2>
-        <p class="text-gray-500 mt-1">实时监控采购、库存及发货数据</p>
-      </div>
+    <main class="flex-1 overflow-y-auto p-6 bg-gray-100" style="height: calc(100vh);">
       
       <!-- 周期选择器 - 全局周期控制 -->
       <div class="mb-6 flex justify-end gap-2">
         <span class="text-sm text-gray-500 flex items-center">数据周期:</span>
         <button class="period-btn active" data-period="week">周度</button>
         <button class="period-btn inactive" data-period="month">月度</button>
-        <button class="period-btn inactive" data-period="year">年度</button>
       </div>
       
       <!-- 数据概览卡片 -->
@@ -232,14 +109,14 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-500 text-sm">采购申请</p>
-              <h3 class="text-3xl font-bold mt-1 data-value" data-week="32" data-month="128" data-year="1456">32</h3>
+              <h3 class="text-3xl font-bold mt-1 data-value" data-week="32" data-month="128">32</h3>
             </div>
             <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
               <i class="fa fa-file-text-o text-xl"></i>
             </div>
           </div>
           <div class="flex items-center gap-1 mt-2">
-            <span class="text-success flex items-center text-sm data-change" data-week="+8.2%" data-month="+12.5%" data-year="+18.3%">
+            <span class="text-success flex items-center text-sm data-change" data-week="+8.2%" data-month="+12.5%">
               <i class="fa fa-arrow-up mr-1"></i>8.2%
             </span>
             <span class="text-gray-400 text-sm">较上期</span>
@@ -263,14 +140,14 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-500 text-sm">采购订单</p>
-              <h3 class="text-3xl font-bold mt-1 data-value" data-week="24" data-month="96" data-year="1120">24</h3>
+              <h3 class="text-3xl font-bold mt-1 data-value" data-week="24" data-month="96">24</h3>
             </div>
             <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
               <i class="fa fa-shopping-cart text-xl"></i>
             </div>
           </div>
           <div class="flex items-center gap-1 mt-2">
-            <span class="text-success flex items-center text-sm data-change" data-week="+5.7%" data-month="+8.3%" data-year="+15.6%">
+            <span class="text-success flex items-center text-sm data-change" data-week="+5.7%" data-month="+8.3%">
               <i class="fa fa-arrow-up mr-1"></i>5.7%
             </span>
             <span class="text-gray-400 text-sm">较上期</span>
@@ -294,14 +171,14 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-500 text-sm">入库单</p>
-              <h3 class="text-3xl font-bold mt-1 data-value" data-week="18" data-month="72" data-year="840">18</h3>
+              <h3 class="text-3xl font-bold mt-1 data-value" data-week="18" data-month="72">18</h3>
             </div>
             <div class="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center text-success">
               <i class="fa fa-sign-in text-xl"></i>
             </div>
           </div>
           <div class="flex items-center gap-1 mt-2">
-            <span class="text-danger flex items-center text-sm data-change" data-week="-1.2%" data-month="-3.1%" data-year="+7.8%">
+            <span class="text-danger flex items-center text-sm data-change" data-week="-1.2%" data-month="-3.1%">
               <i class="fa fa-arrow-down mr-1"></i>1.2%
             </span>
             <span class="text-gray-400 text-sm">较上期</span>
@@ -325,14 +202,14 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-500 text-sm">发货单</p>
-              <h3 class="text-3xl font-bold mt-1 data-value" data-week="16" data-month="64" data-year="752">16</h3>
+              <h3 class="text-3xl font-bold mt-1 data-value" data-week="16" data-month="64">16</h3>
             </div>
             <div class="w-12 h-12 rounded-full bg-warning/10 flex items-center justify-center text-warning">
               <i class="fa fa-truck text-xl"></i>
             </div>
           </div>
           <div class="flex items-center gap-1 mt-2">
-            <span class="text-success flex items-center text-sm data-change" data-week="+12.3%" data-month="+15.2%" data-year="+22.5%">
+            <span class="text-success flex items-center text-sm data-change" data-week="+12.3%" data-month="+15.2%">
               <i class="fa fa-arrow-up mr-1"></i>12.3%
             </span>
             <span class="text-gray-400 text-sm">较上期</span>
@@ -361,7 +238,6 @@
             <div class="flex gap-2 chart-period" data-chart="purchaseComparisonChart">
               <button class="period-btn active" data-period="week">周度</button>
               <button class="period-btn inactive" data-period="month">月度</button>
-              <button class="period-btn inactive" data-period="year">年度</button>
             </div>
           </div>
           <div class="h-80">
@@ -376,7 +252,6 @@
             <div class="flex gap-2 chart-period" data-chart="orderStatusChart">
               <button class="period-btn active" data-period="week">周度</button>
               <button class="period-btn inactive" data-period="month">月度</button>
-              <button class="period-btn inactive" data-period="year">年度</button>
             </div>
           </div>
           <div class="h-80">
@@ -391,33 +266,6 @@
   <script>
     // 全局变量存储图表实例
     let charts = {};
-    
-    // 菜单折叠功能
-    document.getElementById('toggle-sidebar').addEventListener('click', function() {
-      const sidebar = document.getElementById('sidebar');
-      const sidebarText = document.querySelectorAll('.sidebar-item span');
-      const logoText = document.querySelector('aside h1');
-      const toggleBtn = document.getElementById('toggle-sidebar');
-      
-      sidebar.classList.toggle('w-64');
-      sidebar.classList.toggle('w-20');
-      
-      if (sidebar.classList.contains('w-20')) {
-        sidebarText.forEach(text => text.classList.add('hidden'));
-        logoText.classList.add('hidden');
-        toggleBtn.innerHTML = '<i class="fa fa-angle-double-right"></i>';
-      } else {
-        sidebarText.forEach(text => text.classList.remove('hidden'));
-        logoText.classList.remove('hidden');
-        toggleBtn.innerHTML = '<i class="fa fa-angle-double-left"></i><span>收起菜单</span>';
-      }
-    });
-    
-    // 移动端菜单切换
-    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('-translate-x-full');
-    });
     
     // 周期切换功能
     function setupPeriodToggle() {
@@ -447,18 +295,16 @@
               el.className = isPositive ? 'text-success flex items-center text-sm data-change' : 'text-danger flex items-center text-sm data-change';
             });
             
-            // 更新相关图表
-            ['purchaseComparisonChart', 'orderStatusChart'].forEach(chartId => {
-              updateChartPeriod(chartId, period);
-            });
-            
-            // 更新所有图表的周期按钮
-            document.querySelectorAll('.chart-period').forEach(chartPeriod => {
-              chartPeriod.querySelectorAll('.period-btn').forEach(b => {
-                b.classList.remove('active', 'inactive');
-                b.classList.add(b.dataset.period === period ? 'active' : 'inactive');
+            // 更新迷你图表
+            if (['week', 'month'].includes(period)) {
+              document.querySelectorAll('.sparkline').forEach(canvas => {
+                const chartData = JSON.parse(canvas.dataset.chartData);
+                if (chartData[period]) {
+                  canvas.chartInstance.data.datasets[0].data = chartData[period];
+                  canvas.chartInstance.update();
+                }
               });
-            });
+            }
           } else {
             // 单个图表周期切换
             const chartPeriod = this.closest('.chart-period');
@@ -487,23 +333,19 @@
         const data = {
           'purchase-request': {
             week: [5, 4, 6, 5, 7, 3, 2],
-            month: [12, 19, 13, 15, 20, 18, 22, 25, 23, 28, 30, 26],
-            year: [102, 118, 125, 132, 115, 128, 136, 142, 135, 148, 152, 148]
+            month: [13, 5, 26, 24, 14, 25, 33, 5, 24, 28, 24, 8],
           },
           'purchase-order': {
             week: [4, 3, 5, 4, 6, 2, 2],
-            month: [10, 15, 12, 14, 18, 16, 19, 22, 20, 24, 26, 23],
-            year: [85, 92, 105, 112, 102, 110, 118, 125, 118, 128, 135, 130]
+            month: [10, 2, 12, 14, 25, 16, 45, 10, 20, 8, 4, 23],
           },
           'receipt-note': {
             week: [3, 2, 4, 3, 5, 1, 2],
-            month: [8, 12, 10, 13, 15, 14, 16, 18, 17, 20, 19, 17],
-            year: [65, 72, 85, 92, 82, 90, 98, 105, 98, 108, 115, 110]
+            month: [8, 2, 6, 20, 15, 14, 25, 18, 17, 14, 19, 4],
           },
           'delivery-order': {
             week: [2, 3, 4, 3, 5, 1, 2],
-            month: [6, 10, 9, 11, 14, 13, 15, 17, 16, 19, 21, 18],
-            year: [55, 62, 75, 82, 72, 80, 88, 95, 88, 98, 105, 100]
+            month: [6, 5, 9, 11, 20, 13, 6, 17, 4, 19, 10, 18],
           }
         };
         
@@ -567,12 +409,6 @@
           current: [650, 780, 820, 950, 1080, 1250],
           previous: [580, 720, 760, 890, 980, 1120],
           growthRate: [12.1, 8.3, 7.9, 6.7, 10.2, 11.6] // 环比增长率(%)
-        },
-        year: {
-          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-          current: [650, 780, 820, 950, 1080, 1250, 1320, 1450, 1380, 1520, 1650, 1780],
-          previous: [580, 720, 760, 890, 980, 1120, 1250, 1380, 1320, 1450, 1580, 1700],
-          growthRate: [12.1, 8.3, 7.9, 6.7, 10.2, 11.6, 5.6, 5.1, -4.8, 10.3, 8.6, 4.7] // 环比增长率(%)
         }
       };
       
@@ -728,11 +564,7 @@
         },
         month: {
           labels: ['新建', '审批中', '审批通过', '审批拒绝', '审批撤销', '作废'],
-          values: [32, 45, 140, 20, 12, 8]
-        },
-        year: {
-          labels: ['新建', '审批中', '审批通过', '审批拒绝', '审批撤销', '作废'],
-          values: [380, 520, 1650, 240, 140, 95]
+          values: [10, 50, 170, 5, 4, 20]
         }
       };
       
@@ -790,250 +622,6 @@
       };
     }
     
-    // 初始化供应商表现分析图表
-    function initSupplierPerformanceChart() {
-      const ctx = document.getElementById('supplierPerformanceChart').getContext('2d');
-      
-      // 周期数据
-      const data = {
-        month: {
-          labels: ['上海电子', '北京元件', '广州配件', '深圳科技', '杭州精密', '武汉电子'],
-          onTimeRate: [98, 92, 85, 95, 88, 90], // 准时交货率(%)
-          qualityRate: [99, 96, 94, 97, 93, 95], // 质量合格率(%)
-          responseSpeed: [4.8, 4.2, 3.5, 4.6, 3.8, 4.0] // 响应速度(评分1-5)
-        },
-        quarter: {
-          labels: ['上海电子', '北京元件', '广州配件', '深圳科技', '杭州精密', '武汉电子'],
-          onTimeRate: [97, 93, 87, 94, 89, 91],
-          qualityRate: [98, 95, 93, 96, 94, 94],
-          responseSpeed: [4.7, 4.3, 3.6, 4.5, 3.9, 4.1]
-        },
-        year: {
-          labels: ['上海电子', '北京元件', '广州配件', '深圳科技', '杭州精密', '武汉电子'],
-          onTimeRate: [96, 91, 86, 93, 88, 90],
-          qualityRate: [97, 94, 92, 95, 93, 93],
-          responseSpeed: [4.6, 4.2, 3.5, 4.4, 3.8, 4.0]
-        }
-      };
-      
-      // 创建图表
-      const chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: data.month.labels,
-          datasets: [
-            {
-              label: '准时交货率(%)',
-              data: data.month.onTimeRate,
-              backgroundColor: '#165DFF',
-              borderRadius: 4,
-              yAxisID: 'y'
-            },
-            {
-              label: '质量合格率(%)',
-              data: data.month.qualityRate,
-              backgroundColor: '#36CFC9',
-              borderRadius: 4,
-              yAxisID: 'y'
-            },
-            {
-              label: '响应速度(1-5分)',
-              data: data.month.responseSpeed,
-              type: 'line',
-              borderColor: '#FAAD14',
-              backgroundColor: '#FAAD14',
-              borderWidth: 2,
-              pointBackgroundColor: '#FFFFFF',
-              pointBorderColor: '#FAAD14',
-              pointBorderWidth: 2,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              tension: 0.3,
-              yAxisID: 'y1'
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'top',
-              labels: {
-                usePointStyle: true,
-                boxWidth: 6
-              }
-            },
-            tooltip: {
-              mode: 'index',
-              intersect: false
-            }
-          },
-          scales: {
-            x: {
-              grid: { display: false },
-              ticks: { font: { size: 11 } }
-            },
-            y: {
-              type: 'linear',
-              display: true,
-              position: 'left',
-              title: {
-                display: true,
-                text: '百分比(%)',
-                font: { size: 11 }
-              },
-              min: 80,
-              max: 100,
-              grid: { color: '#F0F2F5' },
-              ticks: { 
-                font: { size: 11 },
-                callback: function(value) {
-                  return value + '%';
-                }
-              }
-            },
-            y1: {
-              type: 'linear',
-              display: true,
-              position: 'right',
-              title: {
-                display: true,
-                text: '响应速度评分',
-                font: { size: 11 },
-                color: '#FAAD14'
-              },
-              min: 0,
-              max: 5,
-              grid: {
-                drawOnChartArea: false
-              },
-              ticks: { 
-                font: { size: 11 },
-                color: '#FAAD14'
-              }
-            }
-          },
-          animation: {
-            duration: 1500,
-            easing: 'easeOutQuart'
-          },
-          barPercentage: 0.6,
-          categoryPercentage: 0.7
-        }
-      });
-      
-      // 存储图表数据和实例
-      charts.supplierPerformanceChart = {
-        instance: chart,
-        data: data
-      };
-    }
-    
-    // 初始化采购支出分析图表
-    function initPurchaseSpendingChart() {
-      const ctx = document.getElementById('purchaseSpendingChart').getContext('2d');
-      
-      // 周期数据
-      const data = {
-        month: {
-          labels: ['电子元件', '机械零件', '包装材料', '化工原料', '办公用品', '其他'],
-          current: [125000, 85000, 32000, 68000, 12000, 18000],
-          previous: [110000, 80000, 28000, 62000, 10000, 15000]
-        },
-        quarter: {
-          labels: ['电子元件', '机械零件', '包装材料', '化工原料', '办公用品', '其他'],
-          current: [360000, 250000, 95000, 200000, 35000, 52000],
-          previous: [320000, 230000, 85000, 180000, 30000, 45000]
-        },
-        year: {
-          labels: ['电子元件', '机械零件', '包装材料', '化工原料', '办公用品', '其他'],
-          current: [1450000, 980000, 380000, 790000, 140000, 210000],
-          previous: [1320000, 920000, 350000, 720000, 125000, 185000]
-        }
-      };
-      
-      // 创建图表
-      const chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: data.month.labels,
-          datasets: [
-            {
-              label: '本周期支出',
-              data: data.month.current,
-              backgroundColor: '#165DFF',
-              borderRadius: 4
-            },
-            {
-              label: '上周期支出',
-              data: data.month.previous,
-              backgroundColor: '#E8F3FF',
-              borderRadius: 4
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'top',
-              labels: {
-                usePointStyle: true,
-                boxWidth: 6
-              }
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  let label = context.dataset.label || '';
-                  if (label) {
-                    label += ': ';
-                  }
-                  label += '¥' + context.raw.toLocaleString();
-                  return label;
-                }
-              }
-            }
-          },
-          scales: {
-            x: {
-              grid: { display: false },
-              ticks: { font: { size: 11 } }
-            },
-            y: {
-              beginAtZero: true,
-              grid: { color: '#F0F2F5' },
-              ticks: { 
-                font: { size: 11 },
-                callback: function(value) {
-                  if (value >= 1000000) {
-                    return '¥' + (value / 1000000) + 'M';
-                  } else if (value >= 1000) {
-                    return '¥' + (value / 1000) + 'k';
-                  }
-                  return '¥' + value;
-                }
-              }
-            }
-          },
-          animation: {
-            duration: 1500,
-            easing: 'easeOutQuart'
-          },
-          barPercentage: 0.6,
-          categoryPercentage: 0.7
-        }
-      });
-      
-      // 存储图表数据和实例
-      charts.purchaseSpendingChart = {
-        instance: chart,
-        data: data
-      };
-    }
-    
     // 更新图表周期数据
     function updateChartPeriod(chartId, period) {
       const chartInfo = charts[chartId];
@@ -1054,29 +642,8 @@
         chart.data.datasets[0].data = data.values;
       } 
       
-      // 更新迷你图表
-      if (['week', 'month', 'year'].includes(period)) {
-        document.querySelectorAll('.sparkline').forEach(canvas => {
-          const chartData = JSON.parse(canvas.dataset.chartData);
-          if (chartData[period]) {
-            canvas.chartInstance.data.datasets[0].data = chartData[period];
-            canvas.chartInstance.update();
-          }
-        });
-      }
-      
       chart.update();
     }
-    
-    // 添加页面滚动时的导航栏效果
-    window.addEventListener('scroll', function() {
-      const header = document.querySelector('header');
-      if (window.scrollY > 10) {
-        header.classList.add('shadow-sm');
-      } else {
-        header.classList.remove('shadow-sm');
-      }
-    });
     
     // 初始化所有图表和交互
     document.addEventListener('DOMContentLoaded', function() {
@@ -1084,8 +651,6 @@
       initSparklineCharts();
       initPurchaseComparisonChart();
       initOrderStatusChart();
-      initSupplierPerformanceChart();
-      initPurchaseSpendingChart();
     });
   </script>
 </body>
