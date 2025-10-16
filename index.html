@@ -88,38 +88,67 @@
       background: #a1a1a1;
     }
     
-    /* 自定义下拉选择框样式 */
-    .custom-select {
+    /* 自定义搜索框样式 */
+    .search-container {
       position: relative;
-      width: 200px;
+      width: 240px;
     }
     
-    .custom-select select {
+    .search-input {
       width: 100%;
       padding: 8px 12px;
       border: 1px solid #E5E6EB;
       border-radius: 6px;
       background-color: white;
       font-size: 14px;
-      appearance: none;
-      cursor: pointer;
+      transition: all 0.2s;
     }
     
-    .custom-select::after {
-      content: '\f107';
-      font-family: 'FontAwesome';
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      color: #86909C;
-    }
-    
-    .custom-select select:focus {
+    .search-input:focus {
       outline: none;
       border-color: #165DFF;
       box-shadow: 0 0 0 2px rgba(22, 93, 255, 0.1);
+    }
+    
+    .search-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #E5E6EB;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+    
+    .search-dropdown.active {
+      display: block;
+    }
+    
+    .search-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .search-item:hover {
+      background-color: #F5F7FA;
+    }
+    
+    .search-item.selected {
+      background-color: #E8F3FF;
+      color: #165DFF;
+    }
+    
+    .search-empty {
+      padding: 12px;
+      text-align: center;
+      color: #86909C;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -270,16 +299,12 @@
           <div class="flex items-center justify-between mb-6">
             <h3 class="font-bold text-lg">采购数量环比分析</h3>
             <div class="flex items-center gap-3">
-              <!-- 产品选择下拉框 -->
-              <div class="custom-select">
-                <select id="product-select">
-                  <option value="all">全部产品</option>
-                  <option value="product1">电子元件</option>
-                  <option value="product2">金属材料</option>
-                  <option value="product3">化工原料</option>
-                  <option value="product4">包装材料</option>
-                  <option value="product5">机械设备</option>
-                </select>
+              <!-- 产品搜索框 -->
+              <div class="search-container">
+                <input type="text" class="search-input" id="product-search" placeholder="搜索产品..." autocomplete="off">
+                <div class="search-dropdown" id="product-dropdown">
+                  <!-- 产品列表将通过JavaScript动态生成 -->
+                </div>
               </div>
               <div class="flex gap-2 chart-period" data-chart="purchaseComparisonChart">
                 <button class="period-btn active" data-period="week">周度</button>
@@ -326,6 +351,7 @@
     // 产品数据 - 模拟不同产品的采购数据
     const productData = {
       all: {
+        name: '全部产品',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [85, 92, 105, 98, 112, 78, 65],
@@ -340,6 +366,7 @@
         }
       },
       product1: {
+        name: '神奇螺栓',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [35, 42, 55, 48, 62, 38, 25],
@@ -354,6 +381,7 @@
         }
       },
       product2: {
+        name: '美味草莓',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [20, 22, 25, 23, 27, 18, 15],
@@ -368,6 +396,7 @@
         }
       },
       product3: {
+        name: '大西瓜',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [15, 17, 18, 16, 19, 12, 10],
@@ -382,6 +411,7 @@
         }
       },
       product4: {
+        name: '小西瓜',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [10, 8, 12, 9, 11, 7, 5],
@@ -396,6 +426,7 @@
         }
       },
       product5: {
+        name: '超级香氛机1号',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [5, 3, 5, 2, 3, 3, 10],
@@ -407,6 +438,36 @@
           current: [50, 60, 80, 90, 100, 110],
           previous: [40, 50, 70, 80, 90, 100],
           growthRate: [25.0, 20.0, 14.3, 12.5, 11.1, 10.0]
+        }
+      },
+      product6: {
+        name: '超级香氛机2号',
+        week: {
+          labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+          current: [8, 10, 12, 9, 11, 6, 7],
+          previous: [7, 9, 10, 8, 10, 5, 6],
+          growthRate: [14.3, 11.1, 20.0, 12.5, 10.0, 20.0, 16.7]
+        },
+        month: {
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+          current: [70, 80, 90, 100, 110, 120],
+          previous: [65, 75, 85, 95, 105, 115],
+          growthRate: [7.7, 6.7, 5.9, 5.3, 4.8, 4.3]
+        }
+      },
+      product7: {
+        name: '神秘大荔枝',
+        week: {
+          labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+          current: [12, 14, 16, 13, 15, 10, 8],
+          previous: [11, 13, 15, 12, 14, 9, 7],
+          growthRate: [9.1, 7.7, 6.7, 8.3, 7.1, 11.1, 14.3]
+        },
+        month: {
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+          current: [90, 100, 110, 120, 130, 140],
+          previous: [85, 95, 105, 115, 125, 135],
+          growthRate: [5.9, 5.3, 4.8, 4.3, 4.0, 3.7]
         }
       }
     };
@@ -528,14 +589,76 @@
       });
     }
     
-    // 设置产品选择器
-    function setupProductSelector() {
-      const productSelect = document.getElementById('product-select');
+    // 设置产品搜索功能
+    function setupProductSearch() {
+      const searchInput = document.getElementById('product-search');
+      const dropdown = document.getElementById('product-dropdown');
       
-      productSelect.addEventListener('change', function() {
-        currentProduct = this.value;
-        updateChartPeriod('purchaseComparisonChart', currentGlobalPeriod);
+      // 初始显示全部产品
+      searchInput.value = productData.all.name;
+      
+      // 点击输入框时显示下拉列表
+      searchInput.addEventListener('focus', function() {
+        updateProductDropdown('');
+        dropdown.classList.add('active');
       });
+      
+      // 输入时过滤产品
+      searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        updateProductDropdown(query);
+        dropdown.classList.add('active');
+      });
+      
+      // 点击外部时隐藏下拉列表
+      document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.classList.remove('active');
+        }
+      });
+      
+      // 选择产品
+      dropdown.addEventListener('click', function(e) {
+        if (e.target.classList.contains('search-item')) {
+          const productId = e.target.dataset.id;
+          selectProduct(productId);
+          dropdown.classList.remove('active');
+        }
+      });
+    }
+    
+    // 更新产品下拉列表
+    function updateProductDropdown(query) {
+      const dropdown = document.getElementById('product-dropdown');
+      let html = '';
+      
+      // 过滤产品
+      const filteredProducts = Object.entries(productData).filter(([id, product]) => {
+        return product.name.toLowerCase().includes(query.toLowerCase());
+      });
+      
+      if (filteredProducts.length === 0) {
+        html = '<div class="search-empty">未找到匹配的产品</div>';
+      } else {
+        filteredProducts.forEach(([id, product]) => {
+          const isSelected = id === currentProduct;
+          html += `<div class="search-item ${isSelected ? 'selected' : ''}" data-id="${id}">${product.name}</div>`;
+        });
+      }
+      
+      dropdown.innerHTML = html;
+    }
+    
+    // 选择产品
+    function selectProduct(productId) {
+      currentProduct = productId;
+      const product = productData[productId];
+      
+      // 更新搜索框显示
+      document.getElementById('product-search').value = product.name;
+      
+      // 更新图表数据
+      updateChartPeriod('purchaseComparisonChart', currentGlobalPeriod);
     }
     
     // 初始化迷你图表
@@ -982,7 +1105,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       setupGlobalPeriodToggle();
       setupChartPeriodToggle();
-      setupProductSelector();
+      setupProductSearch();
       initSparklineCharts();
       initPurchaseComparisonChart();
       initOrderStatusChart();
