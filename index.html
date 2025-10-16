@@ -150,6 +150,112 @@
       color: #86909C;
       font-size: 14px;
     }
+    
+    /* 日历选择器样式 */
+    .calendar-container {
+      position: relative;
+    }
+    
+    .calendar-popup {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border: 1px solid #E5E6EB;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      padding: 16px;
+      z-index: 1000;
+      width: 300px;
+      display: none;
+    }
+    
+    .calendar-popup.active {
+      display: block;
+    }
+    
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .calendar-nav {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    
+    .calendar-nav:hover {
+      background-color: #F5F7FA;
+    }
+    
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    
+    .calendar-day-header {
+      text-align: center;
+      font-size: 12px;
+      color: #86909C;
+      padding: 4px;
+    }
+    
+    .calendar-day {
+      text-align: center;
+      padding: 8px 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+    
+    .calendar-day:hover {
+      background-color: #F5F7FA;
+    }
+    
+    .calendar-day.selected {
+      background-color: #165DFF;
+      color: white;
+    }
+    
+    .calendar-day.week-highlight {
+      background-color: #E8F3FF;
+    }
+    
+    .calendar-day.month-highlight {
+      background-color: #E8F3FF;
+    }
+    
+    .calendar-day.other-month {
+      color: #C9CDD4;
+    }
+    
+    .calendar-day.today {
+      border: 1px solid #165DFF;
+    }
+    
+    .calendar-period-display {
+      margin-top: 12px;
+      padding: 8px;
+      background-color: #F5F7FA;
+      border-radius: 4px;
+      font-size: 14px;
+      text-align: center;
+    }
+    
+    /* 周期控制器样式 */
+    .period-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
   </style>
 </head>
 <body class="font-inter bg-gray-100 text-gray-700 min-h-screen">
@@ -159,10 +265,44 @@
     <main class="flex-1 overflow-y-auto p-6 bg-gray-100" style="height: calc(100vh);">
       
       <!-- 周期选择器 - 全局周期控制 -->
-      <div class="mb-6 flex justify-end gap-2">
-        <span class="text-sm text-gray-500 flex items-center">数据周期:</span>
-        <button class="period-btn active" data-period="week" id="global-period-week">周度</button>
-        <button class="period-btn inactive" data-period="month" id="global-period-month">月度</button>
+      <div class="mb-6 flex justify-between items-center">
+        <h2 class="text-xl font-bold text-gray-800"></h2>
+        
+        <!-- 周期控制器和日历选择器 -->
+        <div class="period-controls">
+          <!-- 数据周期选择器 -->
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-500 flex items-center">数据周期:</span>
+            <button class="period-btn active" data-period="week" id="global-period-week">周度</button>
+            <button class="period-btn inactive" data-period="month" id="global-period-month">月度</button>
+          </div>
+          
+          <!-- 日历选择器 -->
+          <div class="calendar-container">
+            <button class="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-md text-sm hover:bg-gray-50 transition-colors" id="calendar-trigger">
+              <i class="fa fa-calendar text-gray-500"></i>
+              <span id="selected-period-display">本周</span>
+              <i class="fa fa-chevron-down text-xs text-gray-400"></i>
+            </button>
+            <div class="calendar-popup" id="calendar-popup">
+              <div class="calendar-header">
+                <button class="calendar-nav" id="prev-period">
+                  <i class="fa fa-chevron-left"></i>
+                </button>
+                <h3 id="calendar-title">2023年11月</h3>
+                <button class="calendar-nav" id="next-period">
+                  <i class="fa fa-chevron-right"></i>
+                </button>
+              </div>
+              <div class="calendar-grid" id="calendar-days">
+                <!-- 日历内容将通过JavaScript动态生成 -->
+              </div>
+              <div class="calendar-period-display" id="selected-period-range">
+                选择周期: 2023-11-06 至 2023-11-12
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- 数据概览卡片 -->
@@ -306,10 +446,6 @@
                   <!-- 产品列表将通过JavaScript动态生成 -->
                 </div>
               </div>
-              <div class="flex gap-2 chart-period" data-chart="purchaseComparisonChart">
-                <button class="period-btn active" data-period="week">周度</button>
-                <button class="period-btn inactive" data-period="month">月度</button>
-              </div>
             </div>
           </div>
           <div class="h-80">
@@ -321,10 +457,6 @@
         <div class="card">
           <div class="flex items-center justify-between mb-6">
             <h3 class="font-bold text-lg">订单状态占比分析</h3>
-            <div class="flex gap-2 chart-period" data-chart="orderStatusChart">
-              <button class="period-btn active" data-period="week">周度</button>
-              <button class="period-btn inactive" data-period="month">月度</button>
-            </div>
           </div>
           <div class="h-80 flex">
             <div class="w-2/3">
@@ -347,6 +479,8 @@
     let charts = {};
     let currentGlobalPeriod = 'week'; // 当前全局周期
     let currentProduct = 'all'; // 当前选中的产品
+    let selectedDate = new Date(); // 当前选中的日期
+    let calendarViewDate = new Date(); // 日历视图的日期
     
     // 产品数据 - 模拟不同产品的采购数据
     const productData = {
@@ -366,7 +500,7 @@
         }
       },
       product1: {
-        name: '神奇螺栓',
+        name: '25G017  神奇螺帽',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [35, 42, 55, 48, 62, 38, 25],
@@ -381,7 +515,7 @@
         }
       },
       product2: {
-        name: '美味草莓',
+        name: '25I001  美味草莓',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [20, 22, 25, 23, 27, 18, 15],
@@ -396,7 +530,7 @@
         }
       },
       product3: {
-        name: '大西瓜',
+        name: '25I033  大西瓜',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [15, 17, 18, 16, 19, 12, 10],
@@ -411,7 +545,7 @@
         }
       },
       product4: {
-        name: '小西瓜',
+        name: '25G016  小西瓜',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [10, 8, 12, 9, 11, 7, 5],
@@ -426,7 +560,7 @@
         }
       },
       product5: {
-        name: '超级香氛机1号',
+        name: '25J002  超级香氛机1号',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [5, 3, 5, 2, 3, 3, 10],
@@ -441,7 +575,7 @@
         }
       },
       product6: {
-        name: '超级香氛机2号',
+        name: '25J003  超级香氛机2号',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [8, 10, 12, 9, 11, 6, 7],
@@ -456,7 +590,7 @@
         }
       },
       product7: {
-        name: '神秘大荔枝',
+        name: '25G014  神秘大荔枝',
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [12, 14, 16, 13, 15, 10, 8],
@@ -493,9 +627,6 @@
       // 更新全局周期按钮状态
       updateGlobalPeriodButtons(period);
       
-      // 更新所有图表周期按钮状态
-      updateAllChartPeriodButtons(period);
-      
       // 更新数据卡片
       updateDataCards(period);
       
@@ -504,6 +635,9 @@
       
       // 更新所有图表数据
       updateAllCharts(period);
+      
+      // 更新日历显示
+      updateCalendarDisplay();
     }
     
     // 更新全局周期按钮状态
@@ -516,18 +650,6 @@
       
       globalMonthBtn.classList.remove('active', 'inactive');
       globalMonthBtn.classList.add(period === 'month' ? 'active' : 'inactive');
-    }
-    
-    // 更新所有图表周期按钮状态
-    function updateAllChartPeriodButtons(period) {
-      document.querySelectorAll('.chart-period').forEach(chartPeriod => {
-        const buttons = chartPeriod.querySelectorAll('.period-btn');
-        
-        buttons.forEach(btn => {
-          btn.classList.remove('active', 'inactive');
-          btn.classList.add(btn.dataset.period === period ? 'active' : 'inactive');
-        });
-      });
     }
     
     // 更新数据卡片
@@ -563,29 +685,6 @@
     function updateAllCharts(period) {
       Object.keys(charts).forEach(chartId => {
         updateChartPeriod(chartId, period);
-      });
-    }
-    
-    // 单个图表周期切换功能 - 只控制自己的数据，不影响全局
-    function setupChartPeriodToggle() {
-      document.querySelectorAll('.chart-period').forEach(chartPeriod => {
-        const buttons = chartPeriod.querySelectorAll('.period-btn');
-        const chartId = chartPeriod.dataset.chart;
-        
-        buttons.forEach(btn => {
-          btn.addEventListener('click', function() {
-            const period = this.dataset.period;
-            
-            // 只更新当前图表的周期按钮状态
-            buttons.forEach(b => {
-              b.classList.remove('active', 'inactive');
-              b.classList.add(b.dataset.period === period ? 'active' : 'inactive');
-            });
-            
-            // 只更新当前图表的数据
-            updateChartPeriod(chartId, period);
-          });
-        });
       });
     }
     
@@ -1101,11 +1200,253 @@
       chart.update();
     }
     
+    // 日历相关功能
+    function setupCalendar() {
+      const calendarTrigger = document.getElementById('calendar-trigger');
+      const calendarPopup = document.getElementById('calendar-popup');
+      const prevPeriodBtn = document.getElementById('prev-period');
+      const nextPeriodBtn = document.getElementById('next-period');
+      
+      // 切换日历显示/隐藏
+      calendarTrigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        calendarPopup.classList.toggle('active');
+      });
+      
+      // 点击外部隐藏日历
+      document.addEventListener('click', function() {
+        calendarPopup.classList.remove('active');
+      });
+      
+      // 阻止日历内部点击事件冒泡
+      calendarPopup.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+      
+      // 上一周期 - 直接切换月份
+      prevPeriodBtn.addEventListener('click', function() {
+        calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+        updateCalendarDisplay();
+      });
+      
+      // 下一周期 - 直接切换月份
+      nextPeriodBtn.addEventListener('click', function() {
+        calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+        updateCalendarDisplay();
+      });
+      
+      // 初始化日历显示
+      updateCalendarDisplay();
+    }
+    
+    // 更新日历显示
+    function updateCalendarDisplay() {
+      const calendarTitle = document.getElementById('calendar-title');
+      const calendarDays = document.getElementById('calendar-days');
+      const selectedPeriodDisplay = document.getElementById('selected-period-display');
+      const selectedPeriodRange = document.getElementById('selected-period-range');
+      
+      // 更新日历标题
+      calendarTitle.textContent = `${calendarViewDate.getFullYear()}年${calendarViewDate.getMonth() + 1}月`;
+      
+      // 更新日历天数
+      calendarDays.innerHTML = generateCalendarDays();
+      
+      // 更新周期显示
+      if (currentGlobalPeriod === 'week') {
+        const weekRange = getWeekRange(selectedDate);
+        selectedPeriodDisplay.textContent = `第${getWeekNumber(selectedDate)}周`;
+        selectedPeriodRange.textContent = `选择周期: ${formatDate(weekRange.start)} 至 ${formatDate(weekRange.end)}`;
+      } else {
+        const monthRange = getMonthRange(selectedDate);
+        selectedPeriodDisplay.textContent = `${selectedDate.getMonth() + 1}月`;
+        selectedPeriodRange.textContent = `选择周期: ${formatDate(monthRange.start)} 至 ${formatDate(monthRange.end)}`;
+      }
+    }
+    
+    // 生成日历天数
+    function generateCalendarDays() {
+      const year = calendarViewDate.getFullYear();
+      const month = calendarViewDate.getMonth();
+      
+      // 获取月份的第一天
+      const firstDay = new Date(year, month, 1);
+      // 获取月份的最后一天
+      const lastDay = new Date(year, month + 1, 0);
+      // 获取月份的第一天是星期几 (0 = 周日, 1 = 周一, ...)
+      const firstDayOfWeek = firstDay.getDay();
+      // 获取上个月的最后几天
+      const prevMonthLastDay = new Date(year, month, 0).getDate();
+      
+      let html = '';
+      
+      // 星期标题
+      const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+      weekDays.forEach(day => {
+        html += `<div class="calendar-day-header">${day}</div>`;
+      });
+      
+      // 上个月的日期
+      for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+        const day = prevMonthLastDay - i;
+        html += `<div class="calendar-day other-month">${day}</div>`;
+      }
+      
+      // 当前月的日期
+      for (let day = 1; day <= lastDay.getDate(); day++) {
+        const date = new Date(year, month, day);
+        const isToday = isSameDay(date, new Date());
+        const isSelected = isDateInSelectedPeriod(date);
+        const highlightClass = getHighlightClass(date);
+        
+        html += `<div class="calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${highlightClass}" data-date="${date.toISOString()}">${day}</div>`;
+      }
+      
+      // 下个月的日期
+      const totalCells = 42; // 6行 * 7列
+      const remainingCells = totalCells - (firstDayOfWeek + lastDay.getDate());
+      for (let day = 1; day <= remainingCells; day++) {
+        html += `<div class="calendar-day other-month">${day}</div>`;
+      }
+      
+      // 添加日期点击事件
+      setTimeout(() => {
+        document.querySelectorAll('.calendar-day:not(.other-month)').forEach(day => {
+          day.addEventListener('click', function() {
+            const date = new Date(this.dataset.date);
+            selectDate(date);
+          });
+          
+          // 添加鼠标悬停事件
+          day.addEventListener('mouseenter', function() {
+            const date = new Date(this.dataset.date);
+            highlightPeriod(date);
+          });
+          
+          day.addEventListener('mouseleave', function() {
+            clearHighlights();
+          });
+        });
+      }, 0);
+      
+      return html;
+    }
+    
+    // 选择日期
+    function selectDate(date) {
+      selectedDate = date;
+      updateCalendarDisplay();
+      updateAllData();
+    }
+    
+    // 高亮周期
+    function highlightPeriod(date) {
+      clearHighlights();
+      
+      if (currentGlobalPeriod === 'week') {
+        const weekRange = getWeekRange(date);
+        highlightDaysInRange(weekRange.start, weekRange.end);
+      } else {
+        const monthRange = getMonthRange(date);
+        highlightDaysInRange(monthRange.start, monthRange.end);
+      }
+    }
+    
+    // 清除高亮
+    function clearHighlights() {
+      document.querySelectorAll('.calendar-day').forEach(day => {
+        day.classList.remove('week-highlight', 'month-highlight');
+      });
+    }
+    
+    // 高亮范围内的日期
+    function highlightDaysInRange(start, end) {
+      document.querySelectorAll('.calendar-day:not(.other-month)').forEach(day => {
+        const date = new Date(day.dataset.date);
+        if (date >= start && date <= end) {
+          day.classList.add(currentGlobalPeriod === 'week' ? 'week-highlight' : 'month-highlight');
+        }
+      });
+    }
+    
+    // 获取日期是否在选中周期内
+    function isDateInSelectedPeriod(date) {
+      if (currentGlobalPeriod === 'week') {
+        const weekRange = getWeekRange(selectedDate);
+        return date >= weekRange.start && date <= weekRange.end;
+      } else {
+        const monthRange = getMonthRange(selectedDate);
+        return date >= monthRange.start && date <= monthRange.end;
+      }
+    }
+    
+    // 获取高亮类名
+    function getHighlightClass(date) {
+      if (currentGlobalPeriod === 'week') {
+        const weekRange = getWeekRange(selectedDate);
+        if (date >= weekRange.start && date <= weekRange.end) {
+          return 'week-highlight';
+        }
+      } else {
+        const monthRange = getMonthRange(selectedDate);
+        if (date >= monthRange.start && date <= monthRange.end) {
+          return 'month-highlight';
+        }
+      }
+      return '';
+    }
+    
+    // 获取周范围
+    function getWeekRange(date) {
+      const day = date.getDay();
+      const start = new Date(date);
+      start.setDate(date.getDate() - (day === 0 ? 6 : day - 1));
+      
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      
+      return { start, end };
+    }
+    
+    // 获取月范围
+    function getMonthRange(date) {
+      const start = new Date(date.getFullYear(), date.getMonth(), 1);
+      const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+      
+      return { start, end };
+    }
+    
+    // 获取周数
+    function getWeekNumber(date) {
+      const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+      const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+      return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+    }
+    
+    // 格式化日期
+    function formatDate(date) {
+      return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    }
+    
+    // 判断是否为同一天
+    function isSameDay(date1, date2) {
+      return date1.getFullYear() === date2.getFullYear() &&
+             date1.getMonth() === date2.getMonth() &&
+             date1.getDate() === date2.getDate();
+    }
+    
+    // 更新所有数据
+    function updateAllData() {
+      updateDataCards(currentGlobalPeriod);
+      updateSparklineCharts(currentGlobalPeriod);
+      updateAllCharts(currentGlobalPeriod);
+    }
+    
     // 初始化所有图表和交互
     document.addEventListener('DOMContentLoaded', function() {
       setupGlobalPeriodToggle();
-      setupChartPeriodToggle();
       setupProductSearch();
+      setupCalendar();
       initSparklineCharts();
       initPurchaseComparisonChart();
       initOrderStatusChart();
