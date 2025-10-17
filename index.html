@@ -359,6 +359,7 @@
       font-size: 10px;
       cursor: help;
       transition: background-color 0.2s;
+      flex-shrink: 0;
     }
     
     .info-icon:hover {
@@ -372,16 +373,20 @@
       transform: translateX(-50%);
       background-color: #1D2129;
       color: white;
-      padding: 8px 12px;
+      padding: 10px 12px;
       border-radius: 6px;
       font-size: 12px;
-      white-space: nowrap;
+      line-height: 1.4;
+      white-space: normal;
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.2s, visibility 0.2s;
       z-index: 1000;
       margin-bottom: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      width: 180px;
+      text-align: center;
+      word-wrap: break-word;
     }
     
     .tooltip-content::after {
@@ -390,7 +395,7 @@
       top: 100%;
       left: 50%;
       transform: translateX(-50%);
-      border-width: 4px;
+      border-width: 5px;
       border-style: solid;
       border-color: #1D2129 transparent transparent transparent;
     }
@@ -398,6 +403,29 @@
     .info-tooltip:hover .tooltip-content {
       opacity: 1;
       visibility: visible;
+    }
+    
+    /* 动态调整提示框位置 */
+    .info-tooltip.left .tooltip-content {
+      left: 0;
+      transform: none;
+    }
+    
+    .info-tooltip.left .tooltip-content::after {
+      left: 15px;
+      transform: none;
+    }
+    
+    .info-tooltip.right .tooltip-content {
+      left: auto;
+      right: 0;
+      transform: none;
+    }
+    
+    .info-tooltip.right .tooltip-content::after {
+      left: auto;
+      right: 15px;
+      transform: none;
     }
   </style>
 </head>
@@ -466,9 +494,9 @@
         <!-- 采购申请 -->
         <div class="stat-card">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1">
               <p class="text-gray-500 text-sm">采购申请数量</p>
-              <div class="info-tooltip">
+              <div class="info-tooltip" id="tooltip-1">
                 <div class="info-icon">
                   <i class="fa fa-info"></i>
                 </div>
@@ -505,9 +533,9 @@
         <!-- 采购订单 -->
         <div class="stat-card">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1">
               <p class="text-gray-500 text-sm">采购下单数量</p>
-              <div class="info-tooltip">
+              <div class="info-tooltip" id="tooltip-2">
                 <div class="info-icon">
                   <i class="fa fa-info"></i>
                 </div>
@@ -544,9 +572,9 @@
         <!-- 入库单 -->
         <div class="stat-card">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1">
               <p class="text-gray-500 text-sm">采购入库数量</p>
-              <div class="info-tooltip">
+              <div class="info-tooltip" id="tooltip-3">
                 <div class="info-icon">
                   <i class="fa fa-info"></i>
                 </div>
@@ -583,14 +611,14 @@
         <!-- 发货单 -->
         <div class="stat-card">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1">
               <p class="text-gray-500 text-sm">发货数量</p>
-              <div class="info-tooltip">
+              <div class="info-tooltip" id="tooltip-4">
                 <div class="info-icon">
                   <i class="fa fa-info"></i>
                 </div>
                 <div class="tooltip-content">
-                  数据说明：所示数量为当前数据周期内已发货的国内仓发货单单据统计结果
+                  数据说明：所示数量为当前数据周期内确认发货的发货单单据统计结果
                 </div>
               </div>
             </div>
@@ -658,7 +686,6 @@
           </div>
         </div>
       </div>
-      
     </main>
   </div>
 
@@ -794,6 +821,31 @@
         }
       }
     };
+    
+    // 动态调整提示框位置，避免溢出屏幕
+    function setupTooltipPositioning() {
+      const tooltips = document.querySelectorAll('.info-tooltip');
+      
+      tooltips.forEach(tooltip => {
+        tooltip.addEventListener('mouseenter', function() {
+          const tooltipContent = this.querySelector('.tooltip-content');
+          const rect = tooltipContent.getBoundingClientRect();
+          
+          // 重置位置类
+          this.classList.remove('left', 'right');
+          
+          // 检查是否超出屏幕右侧
+          if (rect.right > window.innerWidth) {
+            this.classList.add('right');
+          }
+          
+          // 检查是否超出屏幕左侧
+          if (rect.left < 0) {
+            this.classList.add('left');
+          }
+        });
+      });
+    }
     
     // 全局周期切换功能
     function setupGlobalPeriodToggle() {
@@ -1727,6 +1779,7 @@
     
     // 初始化所有图表和交互
     document.addEventListener('DOMContentLoaded', function() {
+      setupTooltipPositioning();
       setupGlobalPeriodToggle();
       setupProductSearch();
       setupCalendar();
