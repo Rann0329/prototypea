@@ -256,6 +256,88 @@
       align-items: center;
       gap: 12px;
     }
+    
+    /* 自定义年份选择器样式 */
+    .year-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+    
+    .custom-year-select {
+      position: relative;
+      width: 120px;
+    }
+    
+    .year-select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border: 1px solid #E5E6EB;
+      border-radius: 6px;
+      background-color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+      height: 36px;
+    }
+    
+    .year-select-trigger:hover {
+      border-color: #165DFF;
+    }
+    
+    .year-select-trigger.active {
+      border-color: #165DFF;
+      box-shadow: 0 0 0 2px rgba(22, 93, 255, 0.1);
+    }
+    
+    .year-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #E5E6EB;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+    
+    .year-dropdown.active {
+      display: block;
+    }
+    
+    .year-option {
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+      color: #1D2129;
+    }
+    
+    .year-option:hover {
+      background-color: #E8F3FF;
+      color: #1D2129;
+    }
+    
+    .year-option.selected {
+      background-color: #165DFF;
+      color: white;
+    }
+    
+    .year-option.selected:hover {
+      background-color: #165DFF;
+      color: white;
+    }
+    
+    #calendar-trigger {
+      height: 36px;
+    }
   </style>
 </head>
 <body class="font-inter bg-gray-100 text-gray-700 min-h-screen">
@@ -278,7 +360,7 @@
           </div>
           
           <!-- 日历选择器 -->
-          <div class="calendar-container">
+          <div class="calendar-container" id="calendar-container">
             <button class="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-md text-sm hover:bg-gray-50 transition-colors" id="calendar-trigger">
               <i class="fa fa-calendar text-gray-500"></i>
               <span id="selected-period-display">本周</span>
@@ -302,6 +384,19 @@
               </div>
             </div>
           </div>
+          
+          <!-- 自定义年份选择器 - 仅在月度模式下显示 -->
+          <div class="year-selector" id="year-selector" style="display: none;">
+            <div class="custom-year-select">
+              <div class="year-select-trigger" id="year-select-trigger">
+                <span id="selected-year">2023年</span>
+                <i class="fa fa-chevron-down text-xs text-gray-400"></i>
+              </div>
+              <div class="year-dropdown" id="year-dropdown">
+                <!-- 年份选项将通过JavaScript动态生成 -->
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -319,7 +414,7 @@
             </div>
           </div>
           <div class="flex items-center gap-1 mt-2">
-            <span class="text-success flex items-center text-sm data-change" data-week="+8.2%" data-month="+12.5%">
+            <span class="text-success flex items-center text-sm data-change" data-week="+8.2%" data-month="+10.5%">
               <i class="fa fa-arrow-up mr-1"></i>8.2%
             </span>
             <span class="text-gray-400 text-sm">较上期</span>
@@ -350,7 +445,7 @@
             </div>
           </div>
           <div class="flex items-center gap-1 mt-2">
-            <span class="text-success flex items-center text-sm data-change" data-week="+5.7%" data-month="+8.3%">
+            <span class="text-success flex items-center text-sm data-change" data-week="+5.7%" data-month="+7.2%">
               <i class="fa fa-arrow-up mr-1"></i>5.7%
             </span>
             <span class="text-gray-400 text-sm">较上期</span>
@@ -381,7 +476,7 @@
             </div>
           </div>
           <div class="flex items-center gap-1 mt-2">
-            <span class="text-danger flex items-center text-sm data-change" data-week="-1.2%" data-month="-3.1%">
+            <span class="text-danger flex items-center text-sm data-change" data-week="-1.2%" data-month="-2.1%">
               <i class="fa fa-arrow-down mr-1"></i>1.2%
             </span>
             <span class="text-gray-400 text-sm">较上期</span>
@@ -412,7 +507,7 @@
             </div>
           </div>
           <div class="flex items-center gap-1 mt-2">
-            <span class="text-success flex items-center text-sm data-change" data-week="+12.3%" data-month="+15.2%">
+            <span class="text-success flex items-center text-sm data-change" data-week="+12.3%" data-month="+13.8%">
               <i class="fa fa-arrow-up mr-1"></i>12.3%
             </span>
             <span class="text-gray-400 text-sm">较上期</span>
@@ -481,8 +576,9 @@
     let currentProduct = 'all'; // 当前选中的产品
     let selectedDate = new Date(); // 当前选中的日期
     let calendarViewDate = new Date(); // 日历视图的日期
+    let currentYear = new Date().getFullYear(); // 当前选中的年份
     
-    // 产品数据 - 模拟不同产品的采购数据
+    // 产品数据 - 仅包含周度和月度数据
     const productData = {
       all: {
         name: '全部产品',
@@ -490,13 +586,13 @@
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [85, 92, 105, 98, 112, 78, 65],
           previous: [72, 85, 92, 88, 105, 70, 60],
-          growthRate: [18.1, 8.2, 14.1, 11.4, 6.7, 11.4, 8.3] // 环比增长率(%)
+          growthRate: [-2.8, 8.2, 14.1, -5.6, 6.7, 11.4, 8.3] // 环比增长率(%)
         },
         month: {
-          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-          current: [650, 780, 820, 950, 1080, 1250],
-          previous: [580, 720, 760, 890, 980, 1120],
-          growthRate: [12.1, 8.3, 7.9, 6.7, 10.2, 11.6] // 环比增长率(%)
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          current: [650, 780, 820, 950, 1080, 1250, 1320, 1400, 1280, 1150, 1050, 980],
+          previous: [580, 720, 760, 890, 980, 1120, 1180, 1250, 1150, 1020, 950, 870],
+          growthRate: [12.1, 8.3, 7.9, -6.7, 10.2, 11.6, 11.9, -12.0, 11.3, 12.7, -10.5, 12.6] // 环比增长率(%)
         }
       },
       product1: {
@@ -505,13 +601,13 @@
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [35, 42, 55, 48, 62, 38, 25],
           previous: [32, 35, 42, 38, 55, 30, 20],
-          growthRate: [9.4, 20.0, 31.0, 26.3, 12.7, 26.7, 25.0]
+          growthRate: [9.4, -20.0, 31.0, 26.3, 12.7, 26.7, -25.0]
         },
         month: {
-          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-          current: [250, 280, 320, 350, 380, 420],
-          previous: [230, 260, 290, 320, 350, 380],
-          growthRate: [8.7, 7.7, 10.3, 9.4, 8.6, 10.5]
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          current: [250, 280, 320, 350, 380, 420, 450, 480, 420, 380, 350, 320],
+          previous: [230, 260, 290, 320, 350, 380, 410, 440, 390, 350, 320, 290],
+          growthRate: [8.7, 7.7, -10.3, -9.4, 8.6, 10.5, 9.8, -9.1, 7.7, 8.6, 9.4, 10.3]
         }
       },
       product2: {
@@ -520,13 +616,13 @@
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [20, 22, 25, 23, 27, 18, 15],
           previous: [18, 20, 22, 21, 25, 17, 14],
-          growthRate: [11.1, 10.0, 13.6, 9.5, 8.0, 5.9, 7.1]
+          growthRate: [11.1, 10.0, -13.6, 9.5, 8.0, 5.9, 7.1]
         },
         month: {
-          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-          current: [150, 170, 180, 200, 220, 240],
-          previous: [140, 160, 170, 190, 210, 230],
-          growthRate: [7.1, 6.3, 5.9, 5.3, 4.8, 4.3]
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          current: [150, 170, 180, 200, 220, 240, 260, 280, 250, 230, 210, 190],
+          previous: [140, 160, 170, 190, 210, 230, 250, 270, 240, 220, 200, 180],
+          growthRate: [7.1, 6.3, 5.9, -5.3, 4.8, 4.3, 4.0, -3.7, 4.2, 4.5, 5.0, 5.6]
         }
       },
       product3: {
@@ -535,13 +631,13 @@
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [15, 17, 18, 16, 19, 12, 10],
           previous: [13, 15, 16, 15, 18, 11, 9],
-          growthRate: [15.4, 13.3, 12.5, 6.7, 5.6, 9.1, 11.1]
+          growthRate: [15.4, 13.3, -12.5, 6.7, 5.6, 9.1, -11.1]
         },
         month: {
-          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-          current: [120, 130, 140, 150, 160, 170],
-          previous: [110, 120, 130, 140, 150, 160],
-          growthRate: [9.1, 8.3, 7.7, 7.1, 6.7, 6.3]
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          current: [120, 130, 140, 150, 160, 170, 180, 190, 170, 150, 140, 130],
+          previous: [110, 120, 130, 140, 150, 160, 170, 180, 160, 140, 130, 120],
+          growthRate: [9.1, 8.3, -7.7, -7.1, 6.7, 6.3, 5.9, 5.6, 6.3, 7.1, -7.7, 8.3]
         }
       },
       product4: {
@@ -550,13 +646,13 @@
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [10, 8, 12, 9, 11, 7, 5],
           previous: [9, 7, 10, 8, 10, 6, 4],
-          growthRate: [11.1, 14.3, 20.0, 12.5, 10.0, 16.7, 25.0]
+          growthRate: [11.1, -14.3, 20.0, 12.5, 10.0, 16.7, -25.0]
         },
         month: {
-          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-          current: [80, 90, 100, 110, 120, 130],
-          previous: [70, 80, 90, 100, 110, 120],
-          growthRate: [14.3, 12.5, 11.1, 10.0, 9.1, 8.3]
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          current: [80, 90, 100, 110, 120, 130, 140, 150, 130, 110, 100, 90],
+          previous: [70, 80, 90, 100, 110, 120, 130, 140, 120, 100, 90, 80],
+          growthRate: [14.3, 12.5, -11.1, 10.0, 9.1, 8.3, 7.7, -7.1, 8.3, 10.0, -11.1, 12.5]
         }
       },
       product5: {
@@ -565,13 +661,13 @@
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [5, 3, 5, 2, 3, 3, 10],
           previous: [4, 2, 4, 2, 2, 2, 8],
-          growthRate: [25.0, 50.0, 25.0, 0.0, 50.0, 50.0, 25.0]
+          growthRate: [25.0, 50.0, -25.0, 0.0, 50.0, 50.0, -25.0]
         },
         month: {
-          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-          current: [50, 60, 80, 90, 100, 110],
-          previous: [40, 50, 70, 80, 90, 100],
-          growthRate: [25.0, 20.0, 14.3, 12.5, 11.1, 10.0]
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          current: [50, 60, 80, 90, 100, 110, 120, 130, 110, 90, 80, 70],
+          previous: [40, 50, 70, 80, 90, 100, 110, 120, 100, 80, 70, 60],
+          growthRate: [25.0, 20.0, -14.3, 12.5, 11.1, -10.0, 9.1, 8.3, 10.0, 12.5, 14.3, 16.7]
         }
       },
       product6: {
@@ -580,13 +676,13 @@
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [8, 10, 12, 9, 11, 6, 7],
           previous: [7, 9, 10, 8, 10, 5, 6],
-          growthRate: [14.3, 11.1, 20.0, 12.5, 10.0, 20.0, 16.7]
+          growthRate: [14.3, 11.1, 20.0, -12.5, 10.0, 20.0, 16.7]
         },
         month: {
-          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-          current: [70, 80, 90, 100, 110, 120],
-          previous: [65, 75, 85, 95, 105, 115],
-          growthRate: [7.7, 6.7, 5.9, 5.3, 4.8, 4.3]
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          current: [70, 80, 90, 100, 110, 120, 130, 140, 120, 100, 90, 80],
+          previous: [65, 75, 85, 95, 105, 115, 125, 135, 115, 95, 85, 75],
+          growthRate: [7.7, -6.7, 5.9, 5.3, -4.8, 4.3, 4.0, 3.7, 4.3, -5.3, 5.9, 6.7]
         }
       },
       product7: {
@@ -595,18 +691,18 @@
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           current: [12, 14, 16, 13, 15, 10, 8],
           previous: [11, 13, 15, 12, 14, 9, 7],
-          growthRate: [9.1, 7.7, 6.7, 8.3, 7.1, 11.1, 14.3]
+          growthRate: [9.1, 7.7, 6.7, -8.3, 7.1, 11.1, -14.3]
         },
         month: {
-          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-          current: [90, 100, 110, 120, 130, 140],
-          previous: [85, 95, 105, 115, 125, 135],
-          growthRate: [5.9, 5.3, 4.8, 4.3, 4.0, 3.7]
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          current: [90, 100, 110, 120, 130, 140, 150, 160, 140, 120, 110, 100],
+          previous: [85, 95, 105, 115, 125, 135, 145, 155, 135, 115, 105, 95],
+          growthRate: [5.9, 5.3, -4.8, 4.3, 4.0, 3.7, 3.4, 3.2, -3.7, 4.3, 4.8, 5.3]
         }
       }
     };
     
-    // 全局周期切换功能 - 控制所有周期选择器
+    // 全局周期切换功能
     function setupGlobalPeriodToggle() {
       const globalWeekBtn = document.getElementById('global-period-week');
       const globalMonthBtn = document.getElementById('global-period-month');
@@ -626,6 +722,9 @@
       
       // 更新全局周期按钮状态
       updateGlobalPeriodButtons(period);
+      
+      // 显示/隐藏日历和年份选择器
+      toggleCalendarAndYearSelector(period);
       
       // 更新数据卡片
       updateDataCards(period);
@@ -650,6 +749,21 @@
       
       globalMonthBtn.classList.remove('active', 'inactive');
       globalMonthBtn.classList.add(period === 'month' ? 'active' : 'inactive');
+    }
+    
+    // 显示/隐藏日历和年份选择器
+    function toggleCalendarAndYearSelector(period) {
+      const calendarContainer = document.getElementById('calendar-container');
+      const yearSelector = document.getElementById('year-selector');
+      
+      // 周度显示日历选择器，月度显示年份选择器
+      if (period === 'week') {
+        calendarContainer.style.display = 'block';
+        yearSelector.style.display = 'none';
+      } else {
+        calendarContainer.style.display = 'none';
+        yearSelector.style.display = 'flex';
+      }
     }
     
     // 更新数据卡片
@@ -770,19 +884,19 @@
         const data = {
           'purchase-request': {
             week: [5, 4, 6, 5, 7, 3, 2],
-            month: [13, 5, 26, 24, 14, 25, 33, 5, 24, 28, 24, 8],
+            month: [13, 5, 26, 24, 14, 25, 33, 5, 24, 28, 24, 8]
           },
           'purchase-order': {
             week: [4, 3, 5, 4, 6, 2, 2],
-            month: [10, 2, 12, 14, 25, 16, 45, 10, 20, 8, 4, 23],
+            month: [10, 2, 12, 14, 25, 16, 45, 10, 20, 8, 4, 23]
           },
           'receipt-note': {
             week: [3, 2, 4, 3, 5, 1, 2],
-            month: [8, 2, 6, 20, 15, 14, 25, 18, 17, 14, 19, 4],
+            month: [8, 2, 6, 20, 15, 14, 25, 18, 17, 14, 19, 4]
           },
           'delivery-order': {
             week: [2, 3, 4, 3, 5, 1, 2],
-            month: [6, 5, 9, 11, 20, 13, 6, 17, 4, 19, 10, 18],
+            month: [6, 5, 9, 11, 20, 13, 6, 17, 4, 19, 10, 18]
           }
         };
         
@@ -980,7 +1094,7 @@
         '变更拒绝': '#6005E1'
       };
       
-      // 周期数据
+      // 周期数据 - 仅保留周度和月度
       const data = {
         week: {
           labels: ['新建', '审批中', '审批通过', '审批拒绝', '变更中', '变更拒绝'],
@@ -988,7 +1102,7 @@
         },
         month: {
           labels: ['新建', '审批中', '审批通过', '审批拒绝', '变更中', '变更拒绝'],
-          values: [10, 50, 170, 5, 4, 20]
+          values: [32, 48, 140, 20, 12, 8]
         }
       };
       
@@ -1259,7 +1373,7 @@
         selectedPeriodRange.textContent = `选择周期: ${formatDate(weekRange.start)} 至 ${formatDate(weekRange.end)}`;
       } else {
         const monthRange = getMonthRange(selectedDate);
-        selectedPeriodDisplay.textContent = `${selectedDate.getMonth() + 1}月`;
+        selectedPeriodDisplay.textContent = `${monthRange.start.getFullYear()}年${monthRange.start.getMonth() + 1}月`;
         selectedPeriodRange.textContent = `选择周期: ${formatDate(monthRange.start)} 至 ${formatDate(monthRange.end)}`;
       }
     }
@@ -1442,11 +1556,88 @@
       updateAllCharts(currentGlobalPeriod);
     }
     
+    // 设置自定义年份选择器
+    function setupYearSelector() {
+      const yearTrigger = document.getElementById('year-select-trigger');
+      const yearDropdown = document.getElementById('year-dropdown');
+      const selectedYear = document.getElementById('selected-year');
+      
+      // 使用当前年份作为默认值
+      const currentYear = new Date().getFullYear();
+      selectedYear.textContent = `${currentYear}年`;
+      
+      // 生成年份选项
+      updateYearDropdown(currentYear);
+      
+      // 切换下拉菜单显示/隐藏
+      yearTrigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        yearDropdown.classList.toggle('active');
+        yearTrigger.classList.toggle('active');
+      });
+      
+      // 点击外部隐藏下拉菜单
+      document.addEventListener('click', function() {
+        yearDropdown.classList.remove('active');
+        yearTrigger.classList.remove('active');
+      });
+      
+      // 阻止下拉菜单内部点击事件冒泡
+      yearDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+      
+      // 选择年份
+      yearDropdown.addEventListener('click', function(e) {
+        if (e.target.classList.contains('year-option')) {
+          const year = parseInt(e.target.dataset.year);
+          selectYear(year);
+        }
+      });
+    }
+    
+    // 更新年份下拉菜单
+    function updateYearDropdown(selectedYear) {
+      const yearDropdown = document.getElementById('year-dropdown');
+      const currentYear = new Date().getFullYear();
+      let html = '';
+      
+      for (let year = currentYear - 5; year <= currentYear + 5; year++) {
+        const isSelected = year === selectedYear;
+        html += `<div class="year-option ${isSelected ? 'selected' : ''}" data-year="${year}">${year}年</div>`;
+      }
+      
+      yearDropdown.innerHTML = html;
+    }
+    
+    // 选择年份
+    function selectYear(year) {
+      currentYear = year;
+      
+      // 更新显示
+      document.getElementById('selected-year').textContent = `${year}年`;
+      
+      // 更新下拉菜单中的选中状态
+      updateYearDropdown(year);
+      
+      // 更新选中日期的年份
+      selectedDate.setFullYear(currentYear);
+      
+      // 关闭下拉菜单
+      document.getElementById('year-dropdown').classList.remove('active');
+      document.getElementById('year-select-trigger').classList.remove('active');
+      
+      // 更新所有数据
+      updateAllData();
+      updateCalendarDisplay();
+    }
+    
     // 初始化所有图表和交互
     document.addEventListener('DOMContentLoaded', function() {
       setupGlobalPeriodToggle();
       setupProductSearch();
       setupCalendar();
+      setupYearSelector();
       initSparklineCharts();
       initPurchaseComparisonChart();
       initOrderStatusChart();
