@@ -589,8 +589,8 @@
           </div>
           <h3 class="text-3xl font-bold mt-1 data-value" data-week="180" data-month="720">180</h3>
           <div class="flex items-center gap-1 mt-2">
-            <span class="text-danger flex items-center text-sm data-change" data-week="-1.2%" data-month="-2.1%">
-              <i class="fa fa-arrow-down mr-1"></i>1.2%
+            <span class="text-gray-500 flex items-center text-sm data-change" data-week="0%" data-month="0%">
+              <i class="fa fa-minus mr-1"></i>0%
             </span>
             <span class="text-gray-400 text-sm">较上期</span>
           </div>
@@ -922,8 +922,23 @@
       document.querySelectorAll('.data-change').forEach(el => {
         const value = el.dataset[period];
         const isPositive = value.startsWith('+');
-        el.innerHTML = `<i class="fa fa-arrow-${isPositive ? 'up' : 'down'} mr-1"></i>${value.replace(/[+-]/, '')}`;
-        el.className = isPositive ? 'text-success flex items-center text-sm data-change' : 'text-danger flex items-center text-sm data-change';
+        const isNegative = value.startsWith('-');
+        const isZero = value === '0%';
+        
+        // 根据值设置样式和图标
+        if (isZero) {
+          // 持平状态 - 显示灰色横线
+          el.innerHTML = `<i class="fa fa-minus mr-1"></i>0%`;
+          el.className = 'text-gray-500 flex items-center text-sm data-change';
+        } else if (isPositive) {
+          // 增长状态 - 显示向上箭头和绿色
+          el.innerHTML = `<i class="fa fa-arrow-up mr-1"></i>${value.replace(/[+-]/, '')}`;
+          el.className = 'text-success flex items-center text-sm data-change';
+        } else if (isNegative) {
+          // 下降状态 - 显示向下箭头和红色
+          el.innerHTML = `<i class="fa fa-arrow-down mr-1"></i>${value.replace(/[+-]/, '')}`;
+          el.className = 'text-danger flex items-center text-sm data-change';
+        }
       });
     }
     
@@ -1747,7 +1762,7 @@
       const currentYear = new Date().getFullYear();
       let html = '';
       
-      for (let year = currentYear - 5; year <= currentYear + 5; year++) {
+      for (let year = currentYear; year <= currentYear + 10; year++) {
         const isSelected = year === selectedYear;
         html += `<div class="year-option ${isSelected ? 'selected' : ''}" data-year="${year}">${year}年</div>`;
       }
